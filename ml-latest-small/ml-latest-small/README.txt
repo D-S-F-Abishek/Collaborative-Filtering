@@ -1,231 +1,79 @@
-🎬 Movie Recommender System
-Collaborative Filtering using Matrix Factorization + SGD
+# 🎬 Movie Recommender System
 
-This project implements a Movie Recommendation System from scratch using Collaborative Filtering with Matrix Factorization, optimized using Stochastic Gradient Descent (SGD).
+This project implements a **Movie Recommendation System** from scratch using **Collaborative Filtering** with **Matrix Factorization**, optimized using **Stochastic Gradient Descent (SGD)**. The system learns hidden (latent) preferences of users and movies from historical ratings to predict ratings for unseen movies, aiming to replicate the core logic behind engines like Netflix and Amazon.
 
-The goal is to deeply understand how modern recommendation engines (like those used by platforms such as Netflix and Amazon) actually work under the hood — mathematically and algorithmically.
+## 🚀 Project Overview
 
-🚀 Project Overview
+* **Technique:** Collaborative Filtering
+* **Model:** Matrix Factorization (with Bias Terms)
+* **Optimization:** Stochastic Gradient Descent (SGD)
+* **Regularization:** L2 Regularization
+* **Evaluation Metric:** RMSE
+* **Dataset:** MovieLens
+* **Core Components:**
+    * User Latent Matrix (W)
+    * Movie Latent Matrix (X)
+    * User & Movie Bias Terms
+    * Dot Product Interaction
 
-Technique: Collaborative Filtering
+## 📂 Dataset
+We use the **MovieLens** dataset, which consists of:
+* `ratings.csv`: User–movie ratings (includes `userId`, `movieId`, `rating`, `timestamp`)
+* `movies.csv`: Movie metadata (includes `title`, `genres`)
 
-Model: Matrix Factorization with Bias Terms
+## 🧠 Core Concepts
 
-Optimization: Stochastic Gradient Descent (SGD)
+### 🔹 1. Collaborative Filtering
+Recommendations are generated based on user behavior rather than movie content. If User A and User B rate movies similarly, they are assumed to share similar preferences.
 
-Regularization: L2 Regularization
-
-Evaluation Metric: RMSE
-
-Dataset: MovieLens
-
-The system learns hidden (latent) preferences of users and movies from historical ratings and predicts ratings for unseen movies.
-
-📂 Dataset
-
-We use the MovieLens dataset, which contains:
-
-ratings.csv → user–movie ratings
-
-movies.csv → movie metadata (title, genres)
-
-Each rating entry includes:
-
-userId
-
-movieId
-
-rating
-
-timestamp
-
-🧠 Core Concepts
-1️⃣ Collaborative Filtering
-
-Recommendations are generated using user behavior only — not movie content.
-
-If two users rate movies similarly, they are likely to enjoy similar movies.
-
-2️⃣ Matrix Factorization
-
+### 🔹 2. Matrix Factorization
 The sparse user–movie rating matrix is decomposed into:
+* **W:** User latent matrix
+* **X:** Movie latent matrix
 
-W → User latent matrix
-
-X → Movie latent matrix
-
-Each user and each movie is represented by a vector of hidden features.
-
-🔹 Prediction Formula (Text Format)
-
-Predicted_Rating(u, i) =
-Global_Mean
-
-User_Bias[u]
-
-Movie_Bias[i]
-
-Dot_Product(User_Vector[u], Movie_Vector[i])
+### 🔹 3. Prediction Formula
+$$\hat{r}_{ui} = \mu + b_u + b_i + q_i^T p_u$$
 
 Where:
-
-Global_Mean = average of all ratings
-
-User_Bias[u] = tendency of user u to rate higher/lower
-
-Movie_Bias[i] = tendency of movie i to receive higher/lower ratings
-
-Dot_Product = interaction between user and movie latent features
-
-3️⃣ Error Calculation
-
-Error = Actual_Rating - Predicted_Rating
-
-4️⃣ SGD Updates
-
-For each rating (u, i):
-
-User_Bias[u] += alpha * (Error - lambda * User_Bias[u])
-
-Movie_Bias[i] += alpha * (Error - lambda * Movie_Bias[i])
-
-User_Vector[u] += alpha * (Error * Movie_Vector[i] - lambda * User_Vector[u])
-
-Movie_Vector[i] += alpha * (Error * User_Vector[u] - lambda * Movie_Vector[i])
-
-Where:
-
-alpha → learning rate
-
-lambda → regularization parameter
-
-5️⃣ RMSE (Evaluation Metric)
-
-RMSE = sqrt( average( (Actual_Rating - Predicted_Rating)^2 ) )
-
-Typical result:
-
-Best Test RMSE ≈ 0.88
-
-This means predictions differ from actual ratings by ~0.88 stars on average.
-
-🔄 Project Workflow
-Stage 1: Data Loading
-
-Load ratings and movies dataset
-
-Perform basic exploratory analysis
-
-Stage 2: User–Item Matrix
-
-Rows → Users
-
-Columns → Movies
-
-Values → Ratings
-
-Stage 3: Re-indexing
-
-Map userId and movieId to continuous indices for matrix operations.
-
-Stage 4: Model Initialization
-
-Initialize:
-
-User latent matrix
-
-Movie latent matrix
-
-User bias vector
-
-Movie bias vector
-
-Stage 5: Training (SGD)
-
-For each rating:
-
-Predict rating
-
-Compute error
-
-Update parameters
-
-Apply regularization
-
-Includes:
-
-Train–test split
-
-L2 regularization
-
-Early stopping
-
-Stage 6: Evaluation
-
-Example:
-
-Movie: 300 (2007)
-Actual Rating: 3.5
-Predicted Rating: 3.83
-
-Stage 7: Recommendations
-
-For a given user:
-
-Predict ratings for all movies
-
-Remove already-rated movies
-
-Sort by predicted rating
-
-Recommend Top-N movies
-
-Example:
-
-Movie A – Predicted Rating: 4.21
-
-Movie B – Predicted Rating: 4.10
-
-Movie C – Predicted Rating: 4.05
-
-📊 Hyperparameters
-Hyperparameter	Description
-alpha	Learning rate
-lambda	Regularization strength
-K	Number of latent factors
-epochs	Number of training iterations
-🛠 Tech Stack
-
-Python
-
-NumPy
-
-Pandas
-
-Matplotlib
-
-Seaborn
-
-⭐ Project Highlights
-
-Collaborative filtering built completely from scratch
-
-Matrix factorization with bias terms
-
-SGD optimization with regularization
-
-Early stopping to prevent overfitting
-
-Proper evaluation using RMSE
-
-🚀 Future Improvements
-
-Mini-batch SGD
-
-Hyperparameter tuning
-
-Hybrid recommender (Collaborative + Content-based)
-
-Neural Collaborative Filtering
-
-Web UI using Streamlit or React
+* `Global_Mean`: Average of all ratings
+* `User_Bias`: Tendency of a user to rate higher/lower
+* `Movie_Bias`: Tendency of a movie to receive higher/lower ratings
+* `Dot_Product`: Interaction between user and movie latent features
+
+### 🔹 4. SGD Updates
+For each rating $ (u, i) $, parameters are updated to minimize the error:
+* `Error` = Actual - Predicted
+* **Update Rule:** $param \leftarrow param + \alpha \cdot (Error \cdot input - \lambda \cdot param)$
+
+## 🔄 Project Workflow
+
+1.  **Data Loading:** Load ratings/movies and perform exploratory analysis.
+2.  **User–Item Matrix:** Construct matrix where Rows=Users, Cols=Movies, Values=Ratings.
+3.  **Re-indexing:** Map IDs to continuous indices.
+4.  **Model Initialization:** Initialize latent matrices and bias vectors.
+5.  **Training (SGD):** Iterate through ratings, predict, compute error, and update parameters.
+6.  **Evaluation:** Calculate RMSE (Typical Best Test RMSE ≈ 0.88).
+7.  **Recommendation:** Predict ratings for unseen movies and return Top-N.
+
+## 📊 Hyperparameters
+
+| Hyperparameter | Description |
+| :--- | :--- |
+| `alpha` | Learning rate |
+| `lambda` | Regularization strength |
+| `K` | Number of latent factors |
+| `epochs` | Number of training iterations |
+
+## 🛠 Tech Stack
+
+* Python
+* NumPy
+* Pandas
+* Matplotlib / Seaborn
+
+## ⭐ Project Highlights
+
+* Collaborative filtering built completely **from scratch**
+* Matrix factorization with **bias terms**
+* **SGD optimization** with L2 regularization
+* **Early stopping** implementation to prevent overfitting
