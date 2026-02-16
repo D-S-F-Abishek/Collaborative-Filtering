@@ -1,19 +1,33 @@
-🎬 Movie Recommender System (Collaborative Filtering)
-📌 Overview
+🎬 Movie Recommender System
+Collaborative Filtering using Matrix Factorization + SGD
 
-This project implements a Collaborative Filtering–based Movie Recommendation System using Matrix Factorization trained with Stochastic Gradient Descent (SGD).
+This project implements a Movie Recommendation System from scratch using Collaborative Filtering with Matrix Factorization, optimized using Stochastic Gradient Descent (SGD).
 
-The system learns hidden (latent) preferences of users and movies from historical ratings and predicts how users might rate unseen movies. Based on these predictions, it recommends the top movies for each user.
+The goal is to deeply understand how modern recommendation engines (like those used by platforms such as Netflix and Amazon) actually work under the hood — mathematically and algorithmically.
 
-This project focuses on building the recommender from scratch to deeply understand how real-world recommendation engines work.
+🚀 Project Overview
+
+Technique: Collaborative Filtering
+
+Model: Matrix Factorization with Bias Terms
+
+Optimization: Stochastic Gradient Descent (SGD)
+
+Regularization: L2 Regularization
+
+Evaluation Metric: RMSE
+
+Dataset: MovieLens
+
+The system learns hidden (latent) preferences of users and movies from historical ratings and predicts ratings for unseen movies.
 
 📂 Dataset
 
-The project uses the MovieLens dataset, which contains:
+We use the MovieLens dataset, which contains:
 
-ratings.csv – user–movie ratings
+ratings.csv → user–movie ratings
 
-movies.csv – movie metadata (title, genres)
+movies.csv → movie metadata (title, genres)
 
 Each rating entry includes:
 
@@ -26,46 +40,79 @@ rating
 timestamp
 
 🧠 Core Concepts
-🔹 Collaborative Filtering
+1️⃣ Collaborative Filtering
 
-Recommendations are generated using user behavior, not movie content.
+Recommendations are generated using user behavior only — not movie content.
 
-If users have similar rating patterns, they are likely to enjoy similar movies.
+If two users rate movies similarly, they are likely to enjoy similar movies.
 
-🔹 Matrix Factorization
+2️⃣ Matrix Factorization
 
 The sparse user–movie rating matrix is decomposed into:
 
-User latent matrix (W)
+W → User latent matrix
 
-Movie latent matrix (X)
+X → Movie latent matrix
 
-Each user and movie is represented by a vector of latent factors.
+Each user and each movie is represented by a vector of hidden features.
 
-Prediction formula:
+🔹 Prediction Formula (Text Format)
 
-rating = global_mean + user_bias + movie_bias + dot(user_vector, movie_vector)
+Predicted_Rating(u, i) =
+Global_Mean
 
-🔹 Stochastic Gradient Descent (SGD)
+User_Bias[u]
 
-The model is trained using SGD:
+Movie_Bias[i]
 
-Updates parameters using one rating at a time
+Dot_Product(User_Vector[u], Movie_Vector[i])
 
-Efficient for large and sparse datasets
+Where:
 
-🔹 Regularization
+Global_Mean = average of all ratings
 
-Regularization is applied to:
+User_Bias[u] = tendency of user u to rate higher/lower
 
-Prevent overfitting
+Movie_Bias[i] = tendency of movie i to receive higher/lower ratings
 
-Control the magnitude of latent factors and biases
+Dot_Product = interaction between user and movie latent features
+
+3️⃣ Error Calculation
+
+Error = Actual_Rating - Predicted_Rating
+
+4️⃣ SGD Updates
+
+For each rating (u, i):
+
+User_Bias[u] += alpha * (Error - lambda * User_Bias[u])
+
+Movie_Bias[i] += alpha * (Error - lambda * Movie_Bias[i])
+
+User_Vector[u] += alpha * (Error * Movie_Vector[i] - lambda * User_Vector[u])
+
+Movie_Vector[i] += alpha * (Error * User_Vector[u] - lambda * Movie_Vector[i])
+
+Where:
+
+alpha → learning rate
+
+lambda → regularization parameter
+
+5️⃣ RMSE (Evaluation Metric)
+
+RMSE = sqrt( average( (Actual_Rating - Predicted_Rating)^2 ) )
+
+Typical result:
+
+Best Test RMSE ≈ 0.88
+
+This means predictions differ from actual ratings by ~0.88 stars on average.
 
 🔄 Project Workflow
 Stage 1: Data Loading
 
-Load ratings and movies datasets
+Load ratings and movies dataset
 
 Perform basic exploratory analysis
 
@@ -79,11 +126,11 @@ Values → Ratings
 
 Stage 3: Re-indexing
 
-Map userId and movieId to continuous indices
-
-Required for matrix operations
+Map userId and movieId to continuous indices for matrix operations.
 
 Stage 4: Model Initialization
+
+Initialize:
 
 User latent matrix
 
@@ -101,36 +148,25 @@ Predict rating
 
 Compute error
 
-Update:
+Update parameters
 
-User bias
-
-Movie bias
-
-User latent factors
-
-Movie latent factors
+Apply regularization
 
 Includes:
+
+Train–test split
 
 L2 regularization
 
 Early stopping
 
-Train–test split
-
 Stage 6: Evaluation
 
-Model performance is evaluated using:
+Example:
 
-RMSE (Root Mean Squared Error)
-
-Typical result:
-
-Best Test RMSE ≈ 0.88
-
-
-This means predictions differ from actual ratings by ~0.88 stars on average.
+Movie: 300 (2007)
+Actual Rating: 3.5
+Predicted Rating: 3.83
 
 Stage 7: Recommendations
 
@@ -142,49 +178,37 @@ Remove already-rated movies
 
 Sort by predicted rating
 
-Recommend top N movies
+Recommend Top-N movies
 
+Example:
+
+Movie A – Predicted Rating: 4.21
+
+Movie B – Predicted Rating: 4.10
+
+Movie C – Predicted Rating: 4.05
+
+📊 Hyperparameters
+Hyperparameter	Description
+alpha	Learning rate
+lambda	Regularization strength
+K	Number of latent factors
+epochs	Number of training iterations
 🛠 Tech Stack
 
 Python
 
 NumPy
+
 Pandas
+
 Matplotlib
+
 Seaborn
-
-▶️ How to Run
-1️⃣ Install Dependencies
-pip install numpy pandas matplotlib seaborn
-
-2️⃣ Download Dataset
-
-Download the MovieLens dataset and place the following files in the project directory:
-
-ratings.csv
-movies.csv
-
-3️⃣ Run the Project
-python recommender.py
-
-📊 Sample Output
-
-Prediction Example:
-
-Movie: 300 (2007)
-Actual Rating: 3.5
-Predicted Rating: 3.83
-
-
-Top Recommendations:
-
-1. Movie A – Predicted Rating: 4.21
-2. Movie B – Predicted Rating: 4.10
-3. Movie C – Predicted Rating: 4.05
 
 ⭐ Project Highlights
 
-Collaborative filtering built from scratch
+Collaborative filtering built completely from scratch
 
 Matrix factorization with bias terms
 
@@ -192,7 +216,7 @@ SGD optimization with regularization
 
 Early stopping to prevent overfitting
 
-Realistic evaluation using RMSE
+Proper evaluation using RMSE
 
 🚀 Future Improvements
 
@@ -200,8 +224,8 @@ Mini-batch SGD
 
 Hyperparameter tuning
 
-Hybrid recommender (collaborative + content-based)
+Hybrid recommender (Collaborative + Content-based)
 
-Neural collaborative filtering
+Neural Collaborative Filtering
 
-Web UI using React or Streamlit
+Web UI using Streamlit or React
